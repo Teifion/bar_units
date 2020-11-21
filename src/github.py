@@ -1,4 +1,4 @@
-from . import cache
+from . import cache, parse, db
 import requests
 import json
 
@@ -29,7 +29,8 @@ def _get_file(data):
     response.encoding = 'utf-8'
     result = response.text
     return result
-  return cache.get(data["name"], execute)
+  contents = cache.get(data["name"], execute)
+  return parse.eval_string(contents)
 
 def _get_folder(data):
   def execute():
@@ -45,7 +46,11 @@ def _get_complete_folder(data):
     if f["type"] == "dir":
       _get_folder(f)
     elif f["type"] == "file":
-      _get_file(f)
+      unit = _get_file(f)
+      if unit != None:
+        (key, data) = unit
+        db.put(key, data)
+
     else:
       raise Exception(f'No handler for file type {f["type"]}')
 
@@ -53,9 +58,6 @@ def _get_unit(unit):
   url_path = unit['url']
   response = requests.get(url_path, headers=headers)
   return response.json()
-
-  # response = requests.get(url_path, headers=headers)
-  # return response.json()
 
 def get_all_unit_files():
   folder_contents = _get_unit_folder_contents(bar_user, bar_repo, bar_units_folder)

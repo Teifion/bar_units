@@ -1,22 +1,32 @@
 # I've made this into a module with getter/setter functions so
 # this can be changed into an actual DB later with less effort
 
-data = {}
+_data = {}
 
-def set(key, value):
-  data[key] = value
+def put(key, value):
+  value["id"] = key
+  _data[key] = value
 
 def get(key):
-  return data[key]
+  return _data[key]
 
 def query(**kwargs):
-  d = data
+  d = _data
   if "name" in kwargs:
-    if type(kwargs["name"]) == list:
+    if isinstance(kwargs["name"]) == list:
       _search_name_in(d, kwargs["name"])
-    elif type(kwargs["name"]) == str:
+    elif isinstance(kwargs["name"]) == str:
       _search_name_eq(d, kwargs["name"])
-  return d
+  return select(d, kwargs["select"])
+
+def select(d, selection):
+  result = []
+  for k, row in d.items():
+    result.append(_get_fields(row, selection))
+  return result
+
+def _get_fields(row, selection):
+  return [row[k] for k in selection]
 
 # def _search_name_in(d, names):
 #   pass
