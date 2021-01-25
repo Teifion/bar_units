@@ -1,4 +1,5 @@
 from . import cache, parse, db
+from datetime import datetime
 import requests
 import json
 
@@ -9,10 +10,19 @@ headers = {
   'Content-Type': 'application/json; charset=utf-8'
 }
 
+def filename(data):
+  return data["name"].replace(".lua", "") + "_" + data["sha"] + ".lua"
+
 def _check_rate_limit():
   url_path = f"https://api.github.com/rate_limit"
   response = requests.get(url_path, headers=headers)
-  return response.json()
+  result = response.json()
+  remaining = result["resources"]["core"]["remaining"]
+
+  if remaining == 0:
+    reset_unix_time = result["resources"]["core"]["reset"]
+    reset_timestamp = datetime.fromtimestamp(reset_unix_time)
+    raise Exception(f"No loads left, resets at {reset_timestamp}")
 
 def _get_unit_folder_contents(user, repo, path):
   def execute():
@@ -23,13 +33,14 @@ def _get_unit_folder_contents(user, repo, path):
   return json.loads(cache.get("f_root", execute))
 
 def _get_file(data):
+  name = filename(data)
   def execute():
     url_path = data["download_url"]
     response = requests.get(url_path, headers=headers)
     response.encoding = 'utf-8'
     result = response.text
     return result
-  contents = cache.get(data["name"], execute)
+  contents = cache.get(name, execute)
   return parse.eval_string(contents)
 
 def _get_folder(data):
@@ -38,11 +49,12 @@ def _get_folder(data):
     response = requests.get(url_path, headers=headers)
     result = json.dumps(response.json())
     return result
-  contents = json.loads(cache.get("f_" + data["name"], execute))
+  contents = json.loads(cache.get("f_" + data["name"] + "_" + data["sha"], execute))
   _get_complete_folder(contents)
 
 def _get_complete_folder(data):
   for f in data:
+    if isinstance(f, str): continue
     if f["type"] == "dir":
       _get_folder(f)
     elif f["type"] == "file":
