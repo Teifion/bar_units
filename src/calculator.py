@@ -1,36 +1,54 @@
-def dps(row):
-  weapons = row["weapondefs"]
-  return 0
+def preprocess(row):
+  row["techlevel"] = row.get("customparams", {}).get("techlevel", 1)
+  row["arm"] = "ARM" in row["objectname"]
+  row["core"] = "COR" in row["objectname"]
+  row["armorcore"] = row["arm"] or row["core"]
 
-def dps1(row):
-  if "weapondefs" not in row: return None
+  row["health"] = row["maxdamage"]
 
-  keys = list(row["weapondefs"].keys())
-  weapon = row["weapondefs"][keys[0]]
+  if "TANK" in row.get("movementclass", ""): row["type"] = "tank"
+  elif "BOT" in row.get("movementclass", ""): row["type"] = "bot"
+  else:
+    if row.get("canfly", False) == True: row["type"] = "air"
+    elif row.get("canmove", False) == True: row["type"] = "ship"
+    else: row["type"] = "building"
 
-  if "default" not in weapon["damage"]: return None
-  dps = weapon["damage"]["default"] / weapon["reloadtime"]
-  dps = dps * weapon.get("burst", 1)
-  # Peewee 100
-  # Warrior 185
-  # AK 75
-  # Thud 61
-  # morty 66
-  # Sumo 508
-  # samson 48
-  return dps
+  row["weapon_count"] = len(row.get("weapondefs", []))
+  row["dps1"] = _dps(row, 1)
+  row["dps2"] = _dps(row, 2)
+  row["dps3"] = _dps(row, 3)
+  row["dps"] = row["dps1"] + row["dps2"] + row["dps3"]
+  
+  row["range1"] = _range(row, 1)
+  row["range2"] = _range(row, 2)
+  row["range3"] = _range(row, 3)
+  row["range"] = row["range1"] + row["range2"] + row["range3"]
+  
+  row["dps_per_metal"] = row["dps"]/max(row["buildcostmetal"],1)
+  row["health_per_metal"] = row["health"]/max(row["buildcostmetal"],1)
 
-def weapon_count(row):
-  return len(row["weapondefs"])
-
-def process_row(row, fields):
-  for f in fields:
-    if f in funcs:
-      row[f] = funcs[f](row)
   return row
 
-funcs = {
-  "dps": dps,
-  "dps1": dps1,
-  "weapon_count": weapon_count
-}
+def _dps(row, x):
+  if "weapondefs" not in row: return 0
+  if len(row["weapondefs"]) < x: return 0
+
+  keys = list(row["weapondefs"].keys())
+  weapon = row["weapondefs"][keys[x-1]]
+
+  if "reloadtime" not in weapon: return 0
+  if weapon["reloadtime"] <= 0: return 0
+  if "default" not in weapon["damage"]: return 0
+
+  dps = weapon["damage"]["default"] / weapon["reloadtime"]
+  dps = dps * weapon.get("burst", 1)
+  return dps
+
+def _range(row, x):
+  if "weapondefs" not in row: return 0
+  if len(row["weapondefs"]) < x: return 0
+
+  keys = list(row["weapondefs"].keys())
+  weapon = row["weapondefs"][keys[x-1]]
+
+  return weapon["range"]
