@@ -1,5 +1,7 @@
 def preprocess(row):
   row["techlevel"] = row.get("customparams", {}).get("techlevel", 1)
+  if "4" in row["id"]: row["techlevel"] = 4
+
   row["arm"] = "ARM" in row["objectname"]
   row["core"] = "COR" in row["objectname"]
   row["armorcore"] = row["arm"] or row["core"]
