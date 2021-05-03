@@ -6,7 +6,7 @@ def get(key, f):
   return _get(key)
 
 def check(key):
-  return bool(os.path.isfile(f".cache/{key}"))
+  return bool(os.path.isfile(f".cache/{key}"))  # TODO: check if .cache folder exists and create if it doesn't
 
 def _put(key, value):
   with open(f".cache/{key}", 'w', encoding="utf8") as f:
