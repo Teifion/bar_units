@@ -23,7 +23,6 @@ def eval_string(string):
   except lupa._lupa.LuaError as e:
     if "attempt to index a nil value" in e.args[0]:
       return None
-    print(e)
     raise
   
 def open_unit_table(data):

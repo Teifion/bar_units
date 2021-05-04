@@ -29,8 +29,8 @@ def query(**kwargs):
       d = _search_gt(d, field, value)
     elif comp == "in":
       d = _search_in(d, field, value)
-    # elif comp in ("not", "not eq"):
-    #   d = _search_not(d, field, value)  # TODO: implement
+    elif comp in ("not", "not eq"):
+      d = _search_not_eq(d, field, value)
     elif comp == "not in":
       d = _search_not_in(d, field, value)
     elif comp == "does not contain":
