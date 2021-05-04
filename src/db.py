@@ -30,7 +30,7 @@ def query(**kwargs):
     elif comp == "in":
       d = _search_in(d, field, value)
     elif comp in ("not", "not eq"):
-      d = _search_not(d, field, value)
+      d = _search_not_eq(d, field, value)
     elif comp == "not in":
       d = _search_not_in(d, field, value)
     elif comp == "does not contain":
@@ -74,5 +74,5 @@ def _search_not_eq(d, key, value):
 
 def _search_not_contain(d, key, value):
   for k, v in d:
-    if value_list not in v[key]:
+    if value not in v[key]:
       yield (k, v)
