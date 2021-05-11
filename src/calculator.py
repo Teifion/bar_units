@@ -44,7 +44,7 @@ def preprocess(row):
   row["range1"] = _range(row, 1)
   row["range2"] = _range(row, 2)
   row["range3"] = _range(row, 3)
-  row["range"] = row["range1"] + row["range2"] + row["range3"]
+  row["range"] = max(row["range1"], row["range2"], row["range3"])
   
   row["dps_per_metal"] = row["dps"]/max(row["buildcostmetal"],1)
   row["health_per_metal"] = row["health"]/max(row["buildcostmetal"],1)
