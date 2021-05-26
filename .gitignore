@@ -4,3 +4,4 @@ __pycache__/
 *$py.class
 .~lock*
 units.csv
+*.code-workspace

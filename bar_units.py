@@ -1,7 +1,12 @@
 import csv
+import sys
 from src import github, db, output
 
 default_filters = [
+  ["armorcore", "is", True]
+]
+
+site_filters = [
   ["armorcore", "is", True]
 ]
 
@@ -28,16 +33,26 @@ filters = [
 """
 
 def main():
+  if len(sys.argv) == 1:
+    filters = []
+  elif len(sys.argv) == 2:
+    fname = sys.argv[1]
+    if fname == "site":
+      filters = site_filters
+    else:
+      filters = default_filters
+
   github._check_rate_limit()
   github.get_all_unit_files()
 
   output.write(
-    filters = [
-      ["type", "is", "bot"],
-      ["techlevel", "is", 1],
-      ["arm", "is", True],
-    ] + default_filters,
-    select = ["id", "name", "buildcostmetal", "buildcostenergy", "buildtime", "health", "dps", "range", "dps_per_metal", "health_per_metal"]
+    filters = filters,
+    select = [
+      "id", "name", "faction", "categories",
+      "buildoptions", "buildcostmetal", "buildcostenergy", "energymake", "metalmake", "buildtime",
+      "dps", "range", "dps_per_metal", "speed", "health",
+      "radardistance", "height"
+    ]
   )
 
 if __name__ == '__main__':

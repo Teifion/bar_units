@@ -6,6 +6,11 @@ def preprocess(row):
   row["core"] = "COR" in row["objectname"]
   row["armorcore"] = row["arm"] or row["core"]
 
+  if row["arm"]:
+    row["faction"] = "arm"
+  elif row["core"]:
+    row["faction"] = "core"
+
   row["health"] = row["maxdamage"]
 
   if "TANK" in row.get("movementclass", ""): row["type"] = "tank"
@@ -20,7 +25,22 @@ def preprocess(row):
   row["dps2"] = _dps(row, 2)
   row["dps3"] = _dps(row, 3)
   row["dps"] = row["dps1"] + row["dps2"] + row["dps3"]
-  
+
+  cat_list = row.get("category", "").split(" ")
+  row["categories"] = ", ".join(cat_list)
+
+  build_dict = row.get("buildoptions", {})
+  row["buildoptions"] = ", ".join([v for v in build_dict.values()])
+
+  row["metalmake"] = row.get("metalmake", None)
+  row["energymake"] = row.get("energymake", None)
+
+  row["radardistance"] = row.get("radardistance", None)
+  row["maxvelocity"] = row.get("maxvelocity", None)
+
+  row["speed"] = row["maxvelocity"]
+  row["height"] = "?"
+
   row["range1"] = _range(row, 1)
   row["range2"] = _range(row, 2)
   row["range3"] = _range(row, 3)

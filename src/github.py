@@ -13,6 +13,11 @@ headers = {
 def filename(data):
   return data["name"].replace(".lua", "") + "_" + data["sha"] + ".lua"
 
+def exclude(name):
+    if "chicken" in name: return True
+    if "scav" in name: return True
+    return False
+
 def _check_rate_limit():
   url_path = f"https://api.github.com/rate_limit"
   response = requests.get(url_path, headers=headers)
@@ -58,10 +63,11 @@ def _get_complete_folder(data):
     if f["type"] == "dir":
       _get_folder(f)
     elif f["type"] == "file":
-      unit = _get_file(f)
-      if unit != None:
-        (key, data) = unit
-        db.put(key, data)
+      if not exclude(f["name"]):
+        unit = _get_file(f)
+        if unit != None:
+          (key, data) = unit
+          db.put(key, data)
 
     else:
       raise Exception(f'No handler for file type {f["type"]}')
