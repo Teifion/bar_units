@@ -13,6 +13,7 @@ def preprocess(row):
 
   row["health"] = row["maxdamage"]
 
+  # TODO: Pelican has movement class HOVER5, but it is a bot. Also hovercraft are not represented.
   if "TANK" in row.get("movementclass", ""): row["type"] = "tank"
   elif "BOT" in row.get("movementclass", ""): row["type"] = "bot"
   else:

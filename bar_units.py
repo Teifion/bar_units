@@ -63,14 +63,14 @@ def main(filters, selection):
 
 if __name__ == '__main__':
   if len(sys.argv) == 1:
-    filters = []
+    filters, selection = default
   elif len(sys.argv) == 2:
     fname = sys.argv[1]
     if fname == "site":
-      (filters, selection) = site
+      filters, selection = site
     elif fname == "metalmake":
-      (filters, selection) = metalmake
+      filters, selection = metalmake
     else:
-      (filters, selection) = default
+      filters, selection = default
   
   main(filters, selection)
