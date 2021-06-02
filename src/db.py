@@ -54,6 +54,8 @@ def _search_in(d, key, value_list):
 
 def _search_gt(d, key, value):
   for k, v in d:
+    if v[key] == None:
+      continue
     if v[key] > value:
       yield (k, v)
 
@@ -64,6 +66,8 @@ def _search_eq(d, key, value):
 
 def _search_not_in(d, key, value_list):
   for k, v in d:
+    if v[key] == None:
+      continue
     if v[key] not in value_list:
       yield (k, v)
 
