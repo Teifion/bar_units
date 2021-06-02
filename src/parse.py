@@ -17,6 +17,7 @@ def eval_string(string):
       .replace("', { name = unitName }", "." + unit_name.split(".")[-1].replace("\"", "") + "'") \
       .replace("')", "\"")
 
+  string = string.replace("units.names.", "").replace("units.names.", "")
   try:
     data = lua.execute(string)
     return open_unit_table(data)
