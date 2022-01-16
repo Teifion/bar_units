@@ -5,14 +5,14 @@ from src import github, db, output
 default = (
   [["armorcore", "is", True]],
   [
-      "id", "name"
+      "id"
   ]
 )
 
 site = (
     [["armorcore", "is", True]],
     [
-        "id", "name", "faction", "categories",
+        "id", "faction", "categories",
         "buildoptions", "buildcostmetal", "buildcostenergy", "energymake", "metalmake", "buildtime",
         "dps", "range", "dps_per_metal", "speed", "health",
         "radardistance", "height"
@@ -26,7 +26,7 @@ metalmake = (
       ["type", "is", "building"]
     ],
     [
-        "id", "name", "faction", "buildcostmetal", "buildcostenergy", "energymake"
+        "id", "faction", "buildcostmetal", "buildcostenergy", "energymake"
     ]
 )
 

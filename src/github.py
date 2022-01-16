@@ -16,6 +16,9 @@ def filename(data):
 def exclude(name):
     if "chicken" in name: return True
     if "scav" in name: return True
+    if "xmas" in name: return True
+    if name[-4:] != ".lua": return True
+    if name[:3] != "cor" and name[:3] != "arm" not in name: return True
     return False
 
 def _check_rate_limit():
