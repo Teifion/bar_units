@@ -3,10 +3,10 @@ import sys
 from src import github, db, output
 
 default = (
-  [["armorcore", "is", True]],
-  [
-      "id"
-  ]
+    [["armorcore", "is", True]],
+    [
+        "id"
+    ]
 )
 
 site = (
@@ -21,9 +21,9 @@ site = (
 
 metalmake = (
     [
-      ["armorcore", "is", True],
-      ["energymake", ">", 5],
-      ["type", "is", "building"]
+        ["armorcore", "is", True],
+        ["energymake", ">", 5],
+        ["type", "is", "building"]
     ],
     [
         "id", "faction", "buildcostmetal", "buildcostenergy", "energymake"
@@ -52,25 +52,27 @@ filters = [
 ] + default_filters,
 """
 
-def main(filters, selection):
-  github._check_rate_limit()
-  github.get_all_unit_files()
 
-  output.write(
-    filters = filters,
-    select = selection
-  )
+def main(filters, selection):
+    github._check_rate_limit()
+    github.get_all_unit_files()
+
+    output.write(
+        filters=filters,
+        select=selection
+    )
+
 
 if __name__ == '__main__':
-  if len(sys.argv) == 1:
-    filters, selection = default
-  elif len(sys.argv) == 2:
-    fname = sys.argv[1]
-    if fname == "site":
-      filters, selection = site
-    elif fname == "metalmake":
-      filters, selection = metalmake
-    else:
-      filters, selection = default
-  
-  main(filters, selection)
+    if len(sys.argv) == 1:
+        filters, selection = default
+    elif len(sys.argv) == 2:
+        fname = sys.argv[1]
+        if fname == "site":
+            filters, selection = site
+        elif fname == "metalmake":
+            filters, selection = metalmake
+        else:
+            filters, selection = default
+
+    main(filters, selection)
