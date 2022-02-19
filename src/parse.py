@@ -1,16 +1,32 @@
 import lupa
 from lupa import LuaRuntime
-lua = LuaRuntime(unpack_returned_tuples=True)
+lua = LuaRuntime()
 
 
-def eval_string(string):
-    # change stuff like this:
-    # local unitName = Spring.I18N('units.names.armaca')
-    # description = Spring.I18N('units.heap', { name = unitName }),
-    # to this:
-    # local unitName = "units.names.armaca"
-    # description = "units.heap.armsomethingsomething",
+def eval_string(path):
+    """
+    runs the lua file and transforms the lua table to a dict
+    path: path to the lua file for the unit
+    """
+    # read the contents of a unit file
+    f = open(path, "r")
+    string = f.read()
+
+    # capture the unit name
     unit_name = string.partition('\n')[0].replace("local unitName = ", "")
+
+    """
+    in the lua code there are references to Spring.I18n
+    this function is unavailable in our environment
+    so we need to change 
+    local unitName = Spring.I18N('units.names.armaca')
+    to
+    local unitName = "units.names.armaca"
+    and
+    description = Spring.I18N('units.heap', { name = unitName }),
+    to
+    description = "units.heap.armsomethingsomething",
+    """
     if "Spring.I18N('" in string:
         unit_name = unit_name.replace(
             "Spring.I18N('", "\"").replace("')", "\"", 1)
@@ -20,10 +36,15 @@ def eval_string(string):
             .replace("')", "\"")
 
     string = string.replace("units.names.", "").replace("units.names.", "")
+
     try:
         data = lua.execute(string)
+        if(not lupa.lua_type(data) == "table"):
+            print("found broken thing at " + path)
         return open_unit_table(data)
     except lupa._lupa.LuaError as e:
+        print("encountered the following error while parsing " + path)
+        print(e.message)
         if "attempt to index a nil value" in e.args[0]:
             return None
         raise

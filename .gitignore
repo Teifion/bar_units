@@ -1,7 +1,11 @@
-/.cache
 __pycache__/
 *.py[cod]
 *$py.class
 .~lock*
-units.csv
 *.code-workspace
+.vscode
+
+/.cache
+scratch.py
+repo
+generated/

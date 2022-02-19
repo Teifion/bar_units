@@ -1,8 +1,6 @@
 # I've made this into a module with getter/setter functions so
 # this can be changed into an actual DB later with less effort
 
-from . import calculator
-
 _data = {}
 
 
@@ -15,13 +13,8 @@ def get(key):
     return _data[key]
 
 
-def preprocess_data(d):
-    for k, row in d.items():
-        yield (k, calculator.preprocess(row))
-
-
 def query(**kwargs):
-    d = preprocess_data(_data)
+    d = [(key, value) for key, value in _data.items()]
     filters = kwargs.get("filters", [])
 
     for f in filters:
