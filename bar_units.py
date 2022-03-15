@@ -67,7 +67,7 @@ def setup():
     if int(major) < 2 or int(minor) < 25:
         # you can try it with an older version git but there are no guarantees
         raise Exception(
-            "you need a newer version of git to run this program at least 2.25.0. see code for a work around")
+            "you need a newer version of git to run this program at least 2.25.0. Please download it from https://git-scm.com/")
 
 
 def main(filters, selection):
