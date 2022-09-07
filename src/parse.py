@@ -43,10 +43,11 @@ def eval_string(path):
             print("found broken thing at " + path)
         return open_unit_table(data)
     except lupa._lupa.LuaError as e:
-        print("encountered the following error while parsing " + path)
-        print(e.message)
-        if "attempt to index a nil value" in e.args[0]:
+        if "attempt to index a nil value" in e.args[0] or (
+                "attempt to index global" in e.args[0] and "(a nil value)" in e.args[0]):
             return None
+        print("encountered the following error while parsing " + path)
+        print(e)
         raise
 
 

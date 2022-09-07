@@ -82,6 +82,10 @@ def main(filters, selection):
     # parseout all the files and create a giant dictionary
     # use intermediate format to create both a raw output and a extended output
     unitTupleList = [parse.eval_string(unitFile) for unitFile in unitFiles]
+
+    while None in unitTupleList:
+        unitTupleList.remove(None)
+
     rawUnits = {id: value for id, value in unitTupleList}
 
     # write the json to disk
