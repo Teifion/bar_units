@@ -21,7 +21,7 @@ def eval_string(string):
   try:
     data = lua.execute(string)
     return open_unit_table(data)
-  except lupa._lupa.LuaError as e:
+  except lupa.LuaError as e:
     if "attempt to index a nil value" in e.args[0]:
       return None
     raise
